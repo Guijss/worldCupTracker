@@ -1,24 +1,122 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import GroupStage from './components/GroupStage';
+import styled from 'styled-components';
+import KnockOut from './components/KnockOut';
+
+const PageContainer = styled.div`
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #212521;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const PhaseSelector = styled.div`
+  position: relative;
+  width: 95%;
+  height: 3rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const Phase = styled.div`
+  position: relative;
+  width: 20rem;
+  height: 100%;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  border-top: 1px solid #dff0d8;
+  border-left: 1px solid #dff0d8;
+  border-right: 1px solid #dff0d8;
+  box-sizing: border-box;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const PhaseFiller = styled.div`
+  position: relative;
+  height: 100%;
+  width: calc(100% - 40rem);
+  box-sizing: border-box;
+  border-bottom: 1px solid #dff0d8;
+`;
+
+const Tracker = styled.div`
+  position: relative;
+  width: 95%;
+  height: 90%;
+  background-color: #262b24;
+  box-sizing: border-box;
+  border-left: 1px solid #dff0d8;
+  border-right: 1px solid #dff0d8;
+  border-bottom: 1px solid #dff0d8;
+`;
 
 function App() {
+  const [phase, setPhase] = useState(1); //1 = group stage, 2 = knockout.
+  const [points, setPoints] = useState(new Array(8).fill(new Array(4).fill(0)));
+  const [goals, setGoals] = useState(
+    new Array(8).fill([
+      ['', ''],
+      ['', ''],
+      ['', ''],
+      ['', ''],
+      ['', ''],
+      ['', ''],
+    ])
+  );
+
+  const handleClick = (num) => {
+    setPhase(num);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <PageContainer>
+      <PhaseSelector>
+        <Phase
+          style={{
+            borderBottom: phase === 1 ? 0 : '1px solid #dff0d8',
+            color: phase === 1 ? '#dff0d8' : '#535353',
+            backgroundColor: phase === 1 ? '#262b24' : '#212521',
+          }}
+          onClick={() => handleClick(1)}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          Group Stage
+        </Phase>
+        <Phase
+          style={{
+            borderBottom: phase === 1 ? '1px solid #dff0d8' : 0,
+            color: phase === 1 ? '#535353' : '#dff0d8',
+            backgroundColor: phase === 1 ? '#212521' : '#262b24',
+          }}
+          onClick={() => handleClick(2)}
+        >
+          Knock Out
+        </Phase>
+        <PhaseFiller />
+      </PhaseSelector>
+      <Tracker>
+        {phase === 1 ? (
+          <GroupStage
+            goals={goals}
+            setGoals={setGoals}
+            points={points}
+            setPoints={setPoints}
+          />
+        ) : (
+          <KnockOut />
+        )}
+      </Tracker>
+    </PageContainer>
   );
 }
 
