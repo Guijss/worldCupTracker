@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Match from './Match';
 
 const KnockContainer = styled.div`
   position: relative;
@@ -13,7 +14,7 @@ const Of = styled.div`
   grid-area: ${(props) => props.area};
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
 `;
 const Qf = styled.div`
@@ -21,7 +22,7 @@ const Qf = styled.div`
   grid-area: ${(props) => props.area};
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
 `;
 
@@ -30,7 +31,7 @@ const Sf = styled.div`
   grid-area: ${(props) => props.area};
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
 `;
 
@@ -39,14 +40,19 @@ const Fi = styled.div`
   grid-area: ${(props) => props.area};
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
 `;
 
 const KnockOut = () => {
   return (
     <KnockContainer>
-      <Of area={'of1'} />
+      <Of area={'of1'}>
+        <Match />
+        <Match />
+        <Match />
+        <Match />
+      </Of>
       <Qf area={'qf1'} />
       <Sf area={'sf1'} />
       <Fi area={'fi'} />

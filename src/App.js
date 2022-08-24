@@ -2,6 +2,7 @@ import { useState } from 'react';
 import GroupStage from './components/GroupStage';
 import styled from 'styled-components';
 import KnockOut from './components/KnockOut';
+import { groupsObj } from './groups';
 
 const PageContainer = styled.div`
   position: relative;
@@ -64,16 +65,43 @@ const Tracker = styled.div`
 function App() {
   const [phase, setPhase] = useState(1); //1 = group stage, 2 = knockout.
   const [points, setPoints] = useState(new Array(8).fill(new Array(4).fill(0)));
+  const [groups, setGroups] = useState(groupsObj);
   const [goals, setGoals] = useState(
     new Array(8).fill([
-      ['', ''],
-      ['', ''],
-      ['', ''],
-      ['', ''],
-      ['', ''],
-      ['', ''],
+      [
+        [0, ''],
+        [1, ''],
+      ],
+      [
+        [2, ''],
+        [3, ''],
+      ],
+      [
+        [0, ''],
+        [2, ''],
+      ],
+      [
+        [3, ''],
+        [1, ''],
+      ],
+      [
+        [3, ''],
+        [0, ''],
+      ],
+      [
+        [1, ''],
+        [2, ''],
+      ],
     ])
   );
+  // const pairings = [
+  //   [0, 1],
+  //   [2, 3],
+  //   [0, 2],
+  //   [3, 1],
+  //   [3, 0],
+  //   [1, 2],
+  // ];
 
   const handleClick = (num) => {
     setPhase(num);
@@ -107,6 +135,8 @@ function App() {
       <Tracker>
         {phase === 1 ? (
           <GroupStage
+            groups={groups}
+            setGroups={setGroups}
             goals={goals}
             setGoals={setGoals}
             points={points}

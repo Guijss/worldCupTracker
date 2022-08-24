@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import Table from './Table';
 import Games from './Games';
-import { groups } from '../groups';
 
 const GroupStageContainer = styled.div`
   position: relative;
@@ -57,21 +56,29 @@ const GamesContainer = styled.div`
   align-items: center;
 `;
 
-const GroupStage = ({ goals, setGoals, points, setPoints }) => {
+const GroupStage = ({
+  groups,
+  setGroups,
+  goals,
+  setGoals,
+  points,
+  setPoints,
+}) => {
   return (
     <GroupStageContainer>
       {groups.map((e, i) => {
         return (
-          <GroupPanel key={i} gridArea={e}>
+          <GroupPanel key={i} gridArea={e.name.toLowerCase()}>
             <Title>Group {e.name}</Title>
             <TableContainer>
-              <Table group={e} points={points[i]} />
+              <Table group={e} />
             </TableContainer>
             <GamesContainer>
               <Games
                 goals={goals[i]}
                 setGoals={setGoals}
                 group={e}
+                setGroups={setGroups}
                 idx={i}
                 setPoints={setPoints}
               />

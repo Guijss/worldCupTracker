@@ -49,20 +49,20 @@ const Points = styled.span`
 `;
 
 const Table = ({ group, points }) => {
-  let organizer = [];
-  for (let i = 0; i < points.length; i++) {
-    organizer.push([group.codes[i], group.teams[i], points[i]]);
-  }
-  organizer.sort((a, b) => b[2] - a[2]);
+  // let organizer = [];
+  // for (let i = 0; i < points.length; i++) {
+  //   organizer.push([group.codes[i], group.teams[i], points[i]]);
+  // }
+  // organizer.sort((a, b) => b[2] - a[2]);
   return (
     <Tab>
-      {organizer.map((e, i) => {
+      {group.table.map((e, i) => {
         return (
           <Line key={i} area={`line${i}`}>
             <FlagContainer>
-              <Flag country={e[0]} size={30} />
+              <Flag country={e[1]} size={30} />
             </FlagContainer>
-            <Name>{e[1]}</Name>
+            <Name>{e[0]}</Name>
             <Points>{e[2]}</Points>
           </Line>
         );

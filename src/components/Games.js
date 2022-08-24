@@ -63,58 +63,77 @@ const GoalsText = styled.input`
   font-family: inherit;
 `;
 
-const pairings = [
-  [0, 1],
-  [2, 3],
-  [0, 2],
-  [3, 1],
-  [3, 0],
-  [1, 2],
-];
-
-const Games = ({ goals, setGoals, group, idx, setPoints }) => {
+const Games = ({ goals, setGoals, group, setGroups, idx, setPoints }) => {
   useEffect(() => {
-    setPoints((prev) =>
-      prev.map((e, i) => (i !== idx ? e : new Array(4).fill(0)))
-    );
+    let table = [];
+    for (let i = 0; i < group.teams.length; i++) {
+      table.push([group.teams[i], group.codes[i], 0]);
+    }
+
     for (let g = 0; g < goals.length; g++) {
-      //draw.
-      if (goals[g][0] !== '' && goals[g][1] !== '') {
-        if (goals[g][0] === goals[g][1]) {
-          setPoints((prev) =>
-            prev.map((e, i) =>
-              i !== idx
-                ? e
-                : e.map((e, i) =>
-                    i === pairings[g][0] || i === pairings[g][1]
-                      ? (parseInt(e) + 1).toString()
-                      : e
-                  )
-            )
-          );
-        } else if (parseInt(goals[g][0]) > parseInt(goals[g][1])) {
-          setPoints((prev) =>
-            prev.map((e, i) =>
-              i !== idx
-                ? e
-                : e.map((e, i) =>
-                    i === pairings[g][0] ? (parseInt(e) + 3).toString() : e
-                  )
-            )
-          );
-        } else if (parseInt(goals[g][1]) > parseInt(goals[g][0])) {
-          setPoints((prev) =>
-            prev.map((e, i) =>
-              i !== idx
-                ? e
-                : e.map((e, i) =>
-                    i === pairings[g][1] ? (parseInt(e) + 3).toString() : e
-                  )
-            )
-          );
+      if (goals[g][0][1] !== '' && goals[g][1][1] !== '') {
+        //draw.
+        if (goals[g][0][1] === goals[g][1][1]) {
+          table[goals[g][0][0]][2]++;
+          table[goals[g][1][0]][2]++;
+          //first teams wins.
+        } else if (goals[g][0][1] > goals[g][1][1]) {
+          table[goals[g][0][0]][2] += 3;
+          //second team wins.
+        } else if (goals[g][1][1] > goals[g][0][1]) {
+          table[goals[g][1][0]][2] += 3;
         }
       }
     }
+
+    setGroups((prev) =>
+      prev.map(
+        (e, i) =>
+          i !== idx ? e : { ...group, table: table.sort((a, b) => b[2] - a[2]) } //TODO: write sort algorithm from scratch to match world cup tiebreak rules.
+      )
+    );
+
+    // setPoints((prev) =>
+    //   prev.map((e, i) => (i !== idx ? e : new Array(4).fill(0)))
+    // );
+    // for (let g = 0; g < goals.length; g++) {
+    //   //draw.
+    //   if (goals[g][0] !== '' && goals[g][1] !== '') {
+    //     if (goals[g][0] === goals[g][1]) {
+    //       setPoints((prev) =>
+    //         prev.map((e, i) =>
+    //           i !== idx
+    //             ? e
+    //             : e.map((e, i) =>
+    //                 i === pairings[g][0] || i === pairings[g][1]
+    //                   ? (parseInt(e) + 1).toString()
+    //                   : e
+    //               )
+    //         )
+    //       );
+    //     } else if (parseInt(goals[g][0]) > parseInt(goals[g][1])) {
+    //       setPoints((prev) =>
+    //         prev.map((e, i) =>
+    //           i !== idx
+    //             ? e
+    //             : e.map((e, i) =>
+    //                 i === pairings[g][0] ? (parseInt(e) + 3).toString() : e
+    //               )
+    //         )
+    //       );
+    //     } else if (parseInt(goals[g][1]) > parseInt(goals[g][0])) {
+    //       setPoints((prev) =>
+    //         prev.map((e, i) =>
+    //           i !== idx
+    //             ? e
+    //             : e.map((e, i) =>
+    //                 i === pairings[g][1] ? (parseInt(e) + 3).toString() : e
+    //               )
+    //         )
+    //       );
+    //     }
+    //   }
+    // }
   }, [goals, idx, setPoints]);
 
   const handleGoals = (event, idx0, idx1, del) => {
@@ -130,7 +149,11 @@ const Games = ({ goals, setGoals, group, idx, setPoints }) => {
               i !== idx0
                 ? e
                 : e.map((e, i) =>
-                    i !== idx1 ? e : del ? '' : event.target.value.toString()
+                    i !== idx1
+                      ? e
+                      : e.map((e, i) =>
+                          i === 0 ? e : del ? '' : event.target.value.toString()
+                        )
                   )
             )
       )
@@ -139,16 +162,16 @@ const Games = ({ goals, setGoals, group, idx, setPoints }) => {
 
   return (
     <GameContainer>
-      {pairings.map((e, i) => {
+      {goals.map((e, i) => {
         return (
           <Line key={i}>
-            <Name area={`team1`}>{group.teams[e[0]]}</Name>
+            <Name area={`team1`}>{group.teams[e[0][0]]}</Name>
             <Goals area={`goals1`}>
               <GoalsText
                 onChange={(e) => handleGoals(e, i, 0, false)}
                 onFocus={(e) => handleGoals(e, i, 0, true)}
                 type="text"
-                value={goals[i][0]}
+                value={e[0][1]}
               ></GoalsText>
             </Goals>
             <Vs>vs</Vs>
@@ -157,10 +180,10 @@ const Games = ({ goals, setGoals, group, idx, setPoints }) => {
                 onChange={(e) => handleGoals(e, i, 1, false)}
                 onFocus={(e) => handleGoals(e, i, 1, true)}
                 type="text"
-                value={goals[i][1]}
+                value={e[1][1]}
               ></GoalsText>
             </Goals>
-            <Name area={`team2`}>{group.teams[e[1]]}</Name>
+            <Name area={`team2`}>{group.teams[e[1][0]]}</Name>
           </Line>
         );
       })}
