@@ -2,7 +2,8 @@ import { useState } from 'react';
 import GroupStage from './components/GroupStage';
 import styled from 'styled-components';
 import KnockOut from './components/KnockOut';
-import { groupsObj } from './groups';
+import { groupsArr, goalsArr } from './groups';
+import useLocalStorage from './useLocalStorage';
 
 const PageContainer = styled.div`
   position: relative;
@@ -49,6 +50,12 @@ const PhaseFiller = styled.div`
   width: calc(100% - 40rem);
   box-sizing: border-box;
   border-bottom: 1px solid #dff0d8;
+  color: #dff0d8;
+  font-size: 2rem;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding-right: 1rem;
 `;
 
 const Tracker = styled.div`
@@ -63,45 +70,10 @@ const Tracker = styled.div`
 `;
 
 function App() {
+  const [goals, setGoals] = useLocalStorage('saved-world-cup-goals', goalsArr);
+  const [groups, setGroups] = useState(groupsArr);
   const [phase, setPhase] = useState(1); //1 = group stage, 2 = knockout.
-  const [points, setPoints] = useState(new Array(8).fill(new Array(4).fill(0)));
-  const [groups, setGroups] = useState(groupsObj);
-  const [goals, setGoals] = useState(
-    new Array(8).fill([
-      [
-        [0, ''],
-        [1, ''],
-      ],
-      [
-        [2, ''],
-        [3, ''],
-      ],
-      [
-        [0, ''],
-        [2, ''],
-      ],
-      [
-        [3, ''],
-        [1, ''],
-      ],
-      [
-        [3, ''],
-        [0, ''],
-      ],
-      [
-        [1, ''],
-        [2, ''],
-      ],
-    ])
-  );
-  // const pairings = [
-  //   [0, 1],
-  //   [2, 3],
-  //   [0, 2],
-  //   [3, 1],
-  //   [3, 0],
-  //   [1, 2],
-  // ];
+  const [goalsFilled, setGoalsFilled] = useState(0);
 
   const handleClick = (num) => {
     setPhase(num);
@@ -130,7 +102,7 @@ function App() {
         >
           Knock Out
         </Phase>
-        <PhaseFiller />
+        <PhaseFiller>2022 World Cup Tracker</PhaseFiller>
       </PhaseSelector>
       <Tracker>
         {phase === 1 ? (
@@ -139,11 +111,10 @@ function App() {
             setGroups={setGroups}
             goals={goals}
             setGoals={setGoals}
-            points={points}
-            setPoints={setPoints}
+            setGoalsFilled={setGoalsFilled}
           />
         ) : (
-          <KnockOut />
+          <KnockOut isUnlocked={goalsFilled >= 96} />
         )}
       </Tracker>
     </PageContainer>

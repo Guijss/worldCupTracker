@@ -56,14 +56,7 @@ const GamesContainer = styled.div`
   align-items: center;
 `;
 
-const GroupStage = ({
-  groups,
-  setGroups,
-  goals,
-  setGoals,
-  points,
-  setPoints,
-}) => {
+const GroupStage = ({ groups, setGroups, goals, setGoals, setGoalsFilled }) => {
   return (
     <GroupStageContainer>
       {groups.map((e, i) => {
@@ -80,7 +73,7 @@ const GroupStage = ({
                 group={e}
                 setGroups={setGroups}
                 idx={i}
-                setPoints={setPoints}
+                setGoalsFilled={setGoalsFilled}
               />
             </GamesContainer>
           </GroupPanel>
