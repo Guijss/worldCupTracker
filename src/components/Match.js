@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
 const MatchContainer = styled.div`
-  position: relative;
+  position: ${(props) => (props.thirdPlace ? 'absolute' : 'relative')};
   height: 4rem;
   width: 80%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transform: translateY(${(props) => (props.thirdPlace ? '15rem' : 0)});
 `;
 
 const Line = styled.div`
@@ -46,9 +47,18 @@ const Goal = styled.span`
   align-items: center;
 `;
 
-const Match = () => {
+const Label = styled.span`
+  position: absolute;
+  top: -2.5rem;
+  color: #dff0d8;
+  font-size: 1.5rem;
+`;
+
+const Match = ({ final = false, thirdPlace = false }) => {
   return (
-    <MatchContainer>
+    <MatchContainer thirdPlace={thirdPlace}>
+      {final && <Label>Final</Label>}
+      {thirdPlace && <Label>Runner Up</Label>}
       <Line>
         <FlagContainer />
         <Name />

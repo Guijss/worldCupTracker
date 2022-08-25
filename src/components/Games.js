@@ -63,84 +63,56 @@ const GoalsText = styled.input`
   font-family: inherit;
 `;
 
-const Games = ({ goals, setGoals, group, setGroups, idx, setPoints }) => {
+const Games = ({ goals, setGoals, group, setGroups, idx, setGoalsFilled }) => {
   useEffect(() => {
-    let table = [];
-    for (let i = 0; i < group.teams.length; i++) {
-      table.push([group.teams[i], group.codes[i], 0]);
-    }
-
-    for (let g = 0; g < goals.length; g++) {
-      if (goals[g][0][1] !== '' && goals[g][1][1] !== '') {
-        //draw.
-        if (goals[g][0][1] === goals[g][1][1]) {
-          table[goals[g][0][0]][2]++;
-          table[goals[g][1][0]][2]++;
-          //first teams wins.
-        } else if (goals[g][0][1] > goals[g][1][1]) {
-          table[goals[g][0][0]][2] += 3;
-          //second team wins.
-        } else if (goals[g][1][1] > goals[g][0][1]) {
-          table[goals[g][1][0]][2] += 3;
+    const setUpTable = (g) => {
+      let table = [];
+      for (let i = 0; i < g.teams.length; i++) {
+        table.push([g.teams[i], g.codes[i], 0, 0, 0, 0]);
+      }
+      for (let g = 0; g < goals.length; g++) {
+        if (goals[g][0][1] !== '' && goals[g][1][1] !== '') {
+          //draw.
+          if (goals[g][0][1] === goals[g][1][1]) {
+            //points.
+            table[goals[g][0][0]][2]++;
+            table[goals[g][1][0]][2]++;
+            //first teams wins.
+          } else if (goals[g][0][1] > goals[g][1][1]) {
+            table[goals[g][0][0]][2] += 3;
+            //second team wins.
+          } else if (goals[g][1][1] > goals[g][0][1]) {
+            table[goals[g][1][0]][2] += 3;
+          }
+          //goals for.
+          table[goals[g][0][0]][3] += parseInt(goals[g][0][1]);
+          table[goals[g][1][0]][3] += parseInt(goals[g][1][1]);
+          //goals against.
+          table[goals[g][0][0]][4] += parseInt(goals[g][1][1]);
+          table[goals[g][1][0]][4] += parseInt(goals[g][0][1]);
+          //goals dif.
+          const dif = parseInt(goals[g][0][1]) - parseInt(goals[g][1][1]);
+          table[goals[g][0][0]][5] += dif;
+          table[goals[g][1][0]][5] += -dif;
         }
       }
-    }
-
-    setGroups((prev) =>
-      prev.map(
-        (e, i) =>
-          i !== idx ? e : { ...group, table: table.sort((a, b) => b[2] - a[2]) } //TODO: write sort algorithm from scratch to match world cup tiebreak rules.
-      )
-    );
-
-    // setPoints((prev) =>
-    //   prev.map((e, i) => (i !== idx ? e : new Array(4).fill(0)))
-    // );
-    // for (let g = 0; g < goals.length; g++) {
-    //   //draw.
-    //   if (goals[g][0] !== '' && goals[g][1] !== '') {
-    //     if (goals[g][0] === goals[g][1]) {
-    //       setPoints((prev) =>
-    //         prev.map((e, i) =>
-    //           i !== idx
-    //             ? e
-    //             : e.map((e, i) =>
-    //                 i === pairings[g][0] || i === pairings[g][1]
-    //                   ? (parseInt(e) + 1).toString()
-    //                   : e
-    //               )
-    //         )
-    //       );
-    //     } else if (parseInt(goals[g][0]) > parseInt(goals[g][1])) {
-    //       setPoints((prev) =>
-    //         prev.map((e, i) =>
-    //           i !== idx
-    //             ? e
-    //             : e.map((e, i) =>
-    //                 i === pairings[g][0] ? (parseInt(e) + 3).toString() : e
-    //               )
-    //         )
-    //       );
-    //     } else if (parseInt(goals[g][1]) > parseInt(goals[g][0])) {
-    //       setPoints((prev) =>
-    //         prev.map((e, i) =>
-    //           i !== idx
-    //             ? e
-    //             : e.map((e, i) =>
-    //                 i === pairings[g][1] ? (parseInt(e) + 3).toString() : e
-    //               )
-    //         )
-    //       );
-    //     }
-    //   }
-    // }
-  }, [goals, idx, setPoints]);
+      return { ...g, table: table.sort((a, b) => b[2] - a[2]) }; //TODO: write sort algorithm from scratch to match world cup tiebreak rules.
+    };
+    setGroups((prev) => prev.map((e, i) => (i !== idx ? e : setUpTable(e))));
+  }, [goals, setGroups, idx]);
 
   const handleGoals = (event, idx0, idx1, del) => {
     const regEx = new RegExp('^[0-9]+$');
     if (!regEx.test(event.target.value) && event.target.value !== '') {
       return;
     }
+    let adder = 0;
+    if (del && goals[idx0][idx1][1].length > 0) {
+      adder = -1;
+    } else if (!del && goals[idx0][idx1][1].length === 0) {
+      adder = 1;
+    }
+    setGoalsFilled((prev) => prev + adder);
     setGoals((prev) =>
       prev.map((e, i) =>
         i !== idx
