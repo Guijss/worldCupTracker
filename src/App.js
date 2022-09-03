@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, createContext } from 'react';
 import GroupStage from './components/GroupStage';
 import styled from 'styled-components';
 import KnockOut from './components/KnockOut';
-import { groupsArr, goalsArr } from './groups';
+import { groupsArr, goalsArr, knockArr, knockGoalsArr } from './groups';
 import useLocalStorage from './useLocalStorage';
+
+export const knockOutContext = createContext({});
 
 const PageContainer = styled.div`
   position: relative;
@@ -42,6 +44,10 @@ const Phase = styled.div`
   &:hover {
     cursor: pointer;
   }
+  @media only screen and (max-width: 912px) {
+    width: 50%;
+    font-size: 1.2rem;
+  }
 `;
 
 const PhaseFiller = styled.div`
@@ -56,6 +62,9 @@ const PhaseFiller = styled.div`
   justify-content: end;
   align-items: center;
   padding-right: 1rem;
+  @media only screen and (max-width: 912px) {
+    display: none;
+  }
 `;
 
 const Tracker = styled.div`
@@ -70,14 +79,36 @@ const Tracker = styled.div`
 `;
 
 function App() {
+  const [windowSize, setWindowSize] = useState({ w: 0, h: 0 });
   const [goals, setGoals] = useLocalStorage('saved-world-cup-goals', goalsArr);
+  const [knockGoals, setKnockGoals] = useLocalStorage(
+    'saved-world-cup-knockGoals',
+    knockGoalsArr
+  );
   const [groups, setGroups] = useState(groupsArr);
-  const [phase, setPhase] = useState(1); //1 = group stage, 2 = knockout.
+  const [phase, setPhase] = useLocalStorage('saved-world-cup-phase', 1); //1 = group stage, 2 = knockout.
   const [goalsFilled, setGoalsFilled] = useState(0);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [knockWinners, setKnockWinners] = useState(knockArr);
+  const [runnerUps, setRunnerUps] = useState([
+    ['', ''],
+    ['', ''],
+  ]);
 
-  const handleClick = (num) => {
-    setPhase(num);
-  };
+  useEffect(() => {
+    const resizeHandler = () => {
+      setWindowSize({ w: window.innerWidth, h: window.innerHeight });
+    };
+    resizeHandler();
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    setIsUnlocked(goalsFilled >= 0);
+  }, [goalsFilled]);
 
   return (
     <PageContainer>
@@ -88,7 +119,7 @@ function App() {
             color: phase === 1 ? '#dff0d8' : '#535353',
             backgroundColor: phase === 1 ? '#262b24' : '#212521',
           }}
-          onClick={() => handleClick(1)}
+          onClick={() => setPhase(1)}
         >
           Group Stage
         </Phase>
@@ -98,7 +129,7 @@ function App() {
             color: phase === 1 ? '#535353' : '#dff0d8',
             backgroundColor: phase === 1 ? '#212521' : '#262b24',
           }}
-          onClick={() => handleClick(2)}
+          onClick={() => setPhase(2)}
         >
           Knock Out
         </Phase>
@@ -112,9 +143,23 @@ function App() {
             goals={goals}
             setGoals={setGoals}
             setGoalsFilled={setGoalsFilled}
+            windowSize={windowSize}
           />
         ) : (
-          <KnockOut isUnlocked={goalsFilled >= 96} />
+          <knockOutContext.Provider
+            value={{
+              isUnlocked,
+              knockWinners,
+              setKnockWinners,
+              knockGoals,
+              setKnockGoals,
+              runnerUps,
+              setRunnerUps,
+              groups,
+            }}
+          >
+            <KnockOut windowSize={windowSize} />
+          </knockOutContext.Provider>
         )}
       </Tracker>
     </PageContainer>

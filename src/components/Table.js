@@ -43,6 +43,11 @@ const Name = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1rem;
+  text-align: center;
+  @media only screen and (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const Points = styled.span`

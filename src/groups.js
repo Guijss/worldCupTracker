@@ -116,3 +116,7 @@ export const goalsArr = new Array(8).fill([
     [2, ''],
   ],
 ]);
+
+export const knockGoalsArr = new Array(16).fill(['', '']);
+
+export const knockArr = new Array(16).fill(['', '']);

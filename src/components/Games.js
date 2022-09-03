@@ -31,6 +31,9 @@ const Name = styled.span`
   justify-content: center;
   align-items: center;
   font-size: 0.8rem;
+  @media only screen and (max-width: 768px) {
+    font-size: 0.7rem;
+  }
 `;
 
 const Goals = styled.span`
@@ -78,10 +81,10 @@ const Games = ({ goals, setGoals, group, setGroups, idx, setGoalsFilled }) => {
             table[goals[g][0][0]][2]++;
             table[goals[g][1][0]][2]++;
             //first teams wins.
-          } else if (goals[g][0][1] > goals[g][1][1]) {
+          } else if (parseInt(goals[g][0][1]) > parseInt(goals[g][1][1])) {
             table[goals[g][0][0]][2] += 3;
             //second team wins.
-          } else if (goals[g][1][1] > goals[g][0][1]) {
+          } else if (parseInt(goals[g][1][1]) > parseInt(goals[g][0][1])) {
             table[goals[g][1][0]][2] += 3;
           }
           //goals for.
@@ -144,7 +147,7 @@ const Games = ({ goals, setGoals, group, setGroups, idx, setGoalsFilled }) => {
                 onFocus={(e) => handleGoals(e, i, 0, true)}
                 type="text"
                 value={e[0][1]}
-              ></GoalsText>
+              />
             </Goals>
             <Vs>vs</Vs>
             <Goals area={`goals2`}>
@@ -153,7 +156,7 @@ const Games = ({ goals, setGoals, group, setGroups, idx, setGoalsFilled }) => {
                 onFocus={(e) => handleGoals(e, i, 1, true)}
                 type="text"
                 value={e[1][1]}
-              ></GoalsText>
+              />
             </Goals>
             <Name area={`team2`}>{group.teams[e[1][0]]}</Name>
           </Line>
