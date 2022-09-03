@@ -49,6 +49,9 @@ const PhaseSelector = styled.div`
 const Champs = styled.div`
   position: absolute;
   top: 10%;
+  @media only screen and (max-width: 921px) {
+    top: 0;
+  }
 `;
 
 const KnockOut = ({ windowSize }) => {
@@ -215,7 +218,13 @@ const KnockOut = ({ windowSize }) => {
               matchNum={matchNums[selectedPhase][0]}
               name={phasesNames[selectedPhase]}
               final={true}
-            />
+            >
+              {knockWinners[15] !== ['', ''] && (
+                <Champs>
+                  <Flag country={knockWinners[15][1]} size={200} />
+                </Champs>
+              )}
+            </Phase>
           )}
         </Knock>
       )}

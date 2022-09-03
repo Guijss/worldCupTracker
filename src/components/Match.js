@@ -151,12 +151,6 @@ const Match = ({
             )
       )
     );
-    if (!final && del) {
-      setRunnerUps([
-        ['', ''],
-        ['', ''],
-      ]);
-    }
   };
 
   return (
