@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/worldCupTracker/static/css/main.d949fbda.css",
+    "main.js": "/worldCupTracker/static/js/main.b05e2ed8.js",
+    "static/js/787.4934b0b5.chunk.js": "/worldCupTracker/static/js/787.4934b0b5.chunk.js",
+    "index.html": "/worldCupTracker/index.html",
+    "main.d949fbda.css.map": "/worldCupTracker/static/css/main.d949fbda.css.map",
+    "main.b05e2ed8.js.map": "/worldCupTracker/static/js/main.b05e2ed8.js.map",
+    "787.4934b0b5.chunk.js.map": "/worldCupTracker/static/js/787.4934b0b5.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d949fbda.css",
+    "static/js/main.b05e2ed8.js"
+  ]
+}
