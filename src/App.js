@@ -107,7 +107,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setIsUnlocked(goalsFilled >= 0);
+    setIsUnlocked(goalsFilled >= 96);
   }, [goalsFilled]);
 
   return (
